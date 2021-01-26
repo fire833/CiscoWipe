@@ -7,20 +7,22 @@ import time
 
 # Random Vars
 
-rm = 'del '
+rm = 'del flash:'
 enter = '\n'
 config = 'conf t'
+confreg = 'confreg'
+reset = 'reset'
 register1 = '0x2142'
 register2 = '0x2102'
 wap_commands_list = os.path.join(sys.path[0], 'wap_commands.txt')
 switch_commands_list = os.path.join(sys.path[0], 'switch_commands.txt')
 router_commands_list = os.path.join(sys.path[0], 'router_commands.txt')
 space = ' '
-sleep_time = 0.05
+sleep_time = 0.1
 x = 0
 y = 0
 z = 0
-dirflash = 'dir flash\n'
+dirflash = 'dir flash:\n'
 
 # Importing the command lists and saving them as collections in memory
 
@@ -68,13 +70,26 @@ def router_file_del():
     keyboard.press(rlen)
     keyboard.write(' files from Router!\n# Here is a list of remaining files: \n' + dirflash)
 
-"""
-with open(wap_commands) as f:
-    content = f.readlines()
-for line in content:
-    print(line)
-"""   
+# ROMMON RESET Functions
 
+def router_rommon_exec():
+    keyboard.write(enter)
+    keyboard.write(confreg + register1 + enter)
+    time.sleep(3.5)
+    keyboard.write(reset + enter)
+
+def wap_rommon_exec():
+    keyboard.write(enter)
+    keyboard.write(rm + 'private_multiple_fs' + enter + 'y' + enter)
+    time.sleep(0.1)
+    keyboard.write(reset + enter + 'y' + enter)
+
+def switch_rommon_exec():
+    keyboard.write(enter)
+    for y in slist:
+        keyboard.write(rm + y + enter + 'y' + enter)
+        time.sleep(sleep_time)
+    
 # Initial loops for searching for keypresses
 
 while True:
