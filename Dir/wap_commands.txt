@@ -1,0 +1,5 @@
+private_multiple_fs
+env.vars
+capwap_saved_config.bak
+config.txt
+/recursive /force configs
