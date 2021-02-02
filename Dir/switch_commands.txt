@@ -1,1 +1,5 @@
 config.txt
+vlan.dat
+config.text
+multiple-fs
+private-config.text
