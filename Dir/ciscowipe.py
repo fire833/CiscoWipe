@@ -78,8 +78,6 @@ with open(asa_commands_list, 'r') as asa:
 
 # Basic purge all files based on command list functions
 
-
-
 def wap_file_del():
     keyboard.write(enter)
     for x in wlist:
