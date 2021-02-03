@@ -151,7 +151,9 @@ options.add_argument("--window_size=1920X1080")
 driver = webdriver.Chrome(chrome_options=options, executable_path=chromedriver)
 driver.get(link)
 
-def print_basic_tech(palletinput, gradeinput, processinput, complianceinput):
+def print_basic_tech(asset, palletinput, gradeinput, processinput, complianceinput):
+    driver.find_element_by_xpath(asset_input)
+    driver.send_keys(asset + enter)
     driver.find_element_by_xpath(pallet)
     driver.send_keys(palletinput)
     driver.find_element_by_xpath(grade)
@@ -175,8 +177,10 @@ def print_misc_info(license, random, custom)
     new_misc()
     driver.find_element_by_xpath(misc_textbx_3)
     driver.send_keys(custom)
-"""
 
+def submit_tech()
+    pass
+"""
 
 # Toggling the while loop for break loop
 
