@@ -177,7 +177,7 @@ def print_misc_info(license, random, custom)
     driver.send_keys(custom)
 
 def submit_tech()
-    pass
+    driver.find_element_by_xpath(submit_asset)
 """
 
 # Toggling the while loop for break loop
