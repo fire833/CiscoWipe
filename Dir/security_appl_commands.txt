@@ -41,4 +41,5 @@ anyconnect-win-2.5.2014-k9.pkg
 anyconnect-linux-2.5.2014-k9.pkg
 anyconnect-macosx-i386-2.5.2014-k9.pkg
 csd_3.5.2008-k9.pkg
+crash.txt
 

@@ -7,3 +7,6 @@ cpconfig-89x.cfg
 cpexpress.tar
 securedesktop-ios-3.1.1.45-k9.pkg
 sslclient-win-1.1.4.176.pkg
+cpconfig-39xx.cfg
+pnp-tech-time
+pnp-tech-discovery-summary

@@ -16,3 +16,8 @@ ce
 lwapp_reap.cfg.bak
 event.capwap
 lwapp_non_apspecific_reap.cfg
+info
+sensord_CSPRNG0
+pnp-saved-config
+lwapp_reap.cfg
+lwapp_officeextend.cfg
