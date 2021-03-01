@@ -16,7 +16,6 @@ from selenium.webdriver.chrome.options import Options
 from pynput.keyboard import Key, Controller, Listener, KeyCode
 from pynput import keyboard
 
-
 # Random Vars
 
 rm = 'del flash:'
@@ -40,24 +39,6 @@ z = 0
 dirflash = 'dir flash:\n'
 breakloop = False
 keyrelease = True
-
-# Vars for Tech web interfacing
-
-link = 'http://mrmprodnew/ProcessSteps/AssetRecoverySummary.aspx'
-
-asset_input = '//*[@id="ctl00_CPH1_txtSearch"]'
-search_assets = '//*[@id="ctl00_CPH1_btnSearch"]'
-pallet = '//*[@id="ctl00_CPH1_ccTransGrid1_rmaAssetInformation_cmbPallets_Input"]'
-grade = '//*[@id="ctl00_CPH1_ccTransGrid1_rmaAssetInformation_ddlGrade_Input"]'
-next_process = '//*[@id="ctl00_CPH1_ccTransGrid1_rmaAssetInformation_ddlNextProcess"]'
-compliance_label = '//*[@id="ctl00_CPH1_ccTransGrid1_rmaAssetInformation_ddlComplianceLabel"]'
-misc = '//*[@id="ctl00_CPH1_ccTransGrid1_rmaAssetComponents_ctl03_btnAdd"]'
-misc_textbx = '//*[@id="ctl00_CPH1_ccTransGrid1_rmaAssetComponents_ctl03_TextBox_Comp_11_2211768_7833637_38_0_True"]'
-misc_textbx_2 = '//*[@id="ctl00_CPH1_ccTransGrid1_rmaAssetComponents_ctl03_TextBox_Comp_11_2211768_7833678_38_0_True"]'
-misc_textbx_3 = '//*[@id="ctl00_CPH1_ccTransGrid1_rmaAssetComponents_ctl03_TextBox_Comp_11_2211768_7833679_38_0_True"]'
-submit_asset = '//*[@id="ctl00_CPH1_ccTransGrid1_btnAssetInfoSubmit_input"]'
-
-chromedriver = os.path.join(sys.path[0], 'chromedriver.exe')
 
 # Importing the command lists and saving them as collections in memory
 
@@ -92,7 +73,7 @@ class main_del():
         keyboard.type(data)
 
     def wap_file_del(self):
-    
+        
         # WAP Deletion logic
         self.write(enter)
         for x in wlist:
@@ -156,49 +137,6 @@ class rommon_del(main_del):
         time.sleep(10)
         self.write('boot' + enter)
 
-
-class Tech_stuff():
-    
-    import time
-    from selenium.webdriver.chrome.options import Options
-    from selenium import webdriver
-
-    def __init__(self):
-        self.options = Options()
-        # options.add_argument("--headless")
-        self.options.add_argument("--window_size=1920X1080")
-        
-        self.driver = webdriver.Chrome(chrome_options=self.options, executable_path=chromedriver)
-        self.driver.get(link)
-
-    def find_element(self, xpath, data):
-        self.findthing = self.driver.find_element_by_xpath(xpath)
-        self.findthing.send_keys(data)
-        time.sleep(0.25)
-    
-    def click_element(self, xpath2):
-        self.click = self.driver.find_element_by_xpath(xpath2)
-        self.click.click()
-
-    def new_misc(self):
-        self.click_element(misc)
-
-    def print_basic_tech(self, asset, palletinput, gradeinput, processinput, complianceinput):
-        self.find_element(asset_input, asset)
-        self.time.sleep(1)
-        map(self.find_element, (pallet, grade, next_process, compliance_label), (palletinput, gradeinput, processinput, complianceinput))
-
-    def print_misc_info(self, license, random, custom):
-        self.new_misc()
-        self.find_element(misc_textbx, license)
-        self.new_misc()
-        self.find_element(misc_textbx_2, random)
-        self.new_misc()
-        self.find_element(misc_textbx_3, custom)
-
-    def submit_tech(self):
-        self.click_element(submit_asset)
-
 class serialwords():
 
     def __init__(self):
@@ -207,8 +145,9 @@ class serialwords():
     def options(self):
         pass
 
-class ser_open(Tech_stuff):
+class ser_open():
     
+    from tech import Tech_stuff
     import serial
     import keyword
 
@@ -222,9 +161,11 @@ class ser_open(Tech_stuff):
         self.is_asa = False
         self.is_in_rommon = False
         self.is_in_priv_exec = False
-    
+        while True:
+            self.reader().search_keywords()
+
     def reader(self):
-        # In theory, read 5 lines, place them into a list, and update _is reading done to trigger the word search function.
+        # In theory, read 1\ lines, place the string into a list, and update _is reading done to trigger the word search function.
         num = 0 
         self.lines = []
         while num < 1:
@@ -233,6 +174,9 @@ class ser_open(Tech_stuff):
         self.is_reading_done = True
     
     def search_keywords(self):
+        # With each line, this method looks for each of these arguments that could be in the string (common Cisco CLI indicators) and then determines what should be done, 
+        # whether it be just inform the class object what type of device is being worked on, what stage in the resetting process it is in, 
+        # or to tell the object class what to do next based off what has been parsed.
         if self.is_reading_done == True:
             words_and_phrases = ['#', ":", 
 #2
@@ -261,43 +205,54 @@ class ser_open(Tech_stuff):
                 
                 self.no_config_dialogue()
                 self.lines = []
+                self.is_reading_done = False
             
             elif(words_and_phrases[8] or words_and_phrases[10] in self.lines):
                 
                 self.username_and_pass()
                 self.lines = []
+                self.is_reading_done = False
             
             elif(words_and_phrases[3] or words_and_phrases[13] in self.lines):
                 
                 self.ser.write("\n")
                 self.lines = []
+                self.is_reading_done = False
             
             elif(words_and_phrases[4] in self.lines):
                 
                 self.is_router = True
+                self.is_reading_done = False
             
             elif(words_and_phrases[5] in self.lines):
 
                 self.is_wap = True
+                self.is_reading_done = False
             
             elif(words_and_phrases[14] in self.lines):
 
                 self.is_asa = True
+                self.is_reading_done = False
 
             elif(words_and_phrases[15] in self.lines):
 
                 self.is_in_rommon = True
+                self.is_reading_done = False
             
             elif(words_and_phrases[16] in self.lines):
 
                 self.is_asa = True
+                self.is_reading_done = False
 
             elif(words_and_phrases[17] in self.lines):
                 
                 self.info = True
+                self.is_reading_done = False
             
             else:
+                
                 self.lines = []
+                self.is_reading_done = False
             
     def no_config_dialogue(self):
         no = 'no'
@@ -310,6 +265,14 @@ class ser_open(Tech_stuff):
         self.ser.write('\n')
 
 # Toggling the while loop for break loop
+
+class command_open(ser_open):
+
+    def __init__(self):
+        pass
+
+    def command_keywords(self):
+        pass
 
 """
 while True:
@@ -344,4 +307,3 @@ with keyboard.GlobalHotKeys({
 
 print("HI")
 # Loops for looking for command input
-
