@@ -5,6 +5,9 @@
 import os
 import sys
 import threading
+import exceptions
+from exceptions import AssetIngestError
+from exceptions import CredentialsError
 
 class Tech_stuff():
     
@@ -12,7 +15,7 @@ class Tech_stuff():
     from selenium.webdriver.chrome.options import Options
     from selenium import webdriver
 
-    def __init__(self, pallet_in, grade_in, process_in, compliance_in):
+    def __init__(self, pallet_in, grade_in, process_in, compliance_in, args, misc, assets_to_tech):
         
         self.link = 'http://mrmprodnew/ProcessSteps/AssetRecoverySummary.aspx'
 
@@ -22,7 +25,7 @@ class Tech_stuff():
         self.gradeinput = grade_in
         self.processinput = process_in
         self.complianceinput = str(compliance_in)
-
+        
         self.asset_input = '//*[@id="ctl00_CPH1_txtSearch"]'
         self.search_assets = '//*[@id="ctl00_CPH1_btnSearch"]'
         self.pallet = '//*[@id="ctl00_CPH1_ccTransGrid1_rmaAssetInformation_cmbPallets_Input"]'
@@ -40,7 +43,11 @@ class Tech_stuff():
         self.options.add_argument("--window_size=1920X1080")
 
         self.driver = self.webdriver.Chrome(chrome_options=self.options, executable_path=self.chromedriver)
-        self.driver.get(self.link)
+        try:
+            self.driver.get(self.link)
+        except:
+            raise ConnectionError('Unable to connect to Makor. Is the server down?')
+
 
     def find_element(self, xpath, data):
         
@@ -53,9 +60,10 @@ class Tech_stuff():
         self.click = self.driver.find_element_by_xpath(xpath2)
         self.click.click()
 
-    def new_misc(self):
+    def new_misc(self, data):
         
         self.click_element(self.misc)
+        self.find_element(self.misc_textbx, data)
 
     def print_basic_tech(self, asset, palletinput, gradeinput, processinput, complianceinput):
         
@@ -63,55 +71,48 @@ class Tech_stuff():
         self.time.sleep(0.5)
         map(self.find_element, (self.pallet, self.grade, self.next_process, self.compliance_label), (self.palletinput, self.gradeinput, self.processinput, self.complianceinput))
 
-    def print_misc_info(self, license, random, custom):
-        
-        self.new_misc()
-        self.find_element(self.misc_textbx, license)
-        self.new_misc()
-        self.find_element(self.misc_textbx_2, random)
-        self.new_misc()
-        self.find_element(self.misc_textbx_3, custom)
-
     def submit_tech(self):
         
         self.click_element(self.submit_asset)
 
-class tech_thread(Tech_stuff):
+    def process_args(self, list):
+        # Now comes processing the list and applying the different facets to individual assets depending on what flags are defined in the .txt file.
+        # If there is a / after the asset, then the proigram will check for any of the following flags:
+        # "r" means that 'Ray or Eric mentioned to scrap/tech selected asset.'
+        # "d" means that 'Unit is damaged and unable/not worth being refurbished.'
+        # "o" means that 'Unit is deprecated/old/no longer financially viable to resell.'
+        # "f" means that 'Unit failed to power on or work properly or is unable to be reset."
+        # "p" means that 'Unit is from a provider and may have customer data on it that is unremovable.'
+        #
+        self.asset_attributes = []
+        if is_list == True:
+            for line in self.list:
+                for x in line:
+                    if x == '/':
+                        for letters in self.list:
+                            if letters == 'r':
+                                self.asset_attributes.append('r')
+                            elif letters == 'd':
+                                self.asset_attributes.append('d')
+
+class credentials():
 
     def __init__(self):
         pass
 
-    def get_credentials(self):
+    def user(self):
         # Get user input for what their Makor login credentials are, and save them as a string in memory. 
-        self.user = input('Please type your username for logging into Makor: ')
-        self.passwd = input('Please type your password for logging into Makor: ')
-
-def process(self, list):
-    # Now comes processing the list and applying the different facets to individual assets depending on what flags are defined in the .txt file.
-    # If there is a / after the asset, then the proigram will check for any of the following flags:
-    # "r" means that 'Ray or Eric mentioned to scrap/tech selected asset.'
-    # "d" means that 'Unit is damaged and unable/not worth being refurbished.'
-    # "o" means that 'Unit is deprecated/old/no longer financially viable to resell.'
-    # 
-    asset_attributes = []
-    if is_list == True:
-        for line in self.list:
-            for x in line:
-                if x == '/':
-                    for letters in self.list:
-                        if letters == 'r':
-                            asset_attributes.append('r')
-                        elif letters == 'd':
-                            asset_attributes.append('d')
-                        
-
-class AssetIngestError(Exception):
-    pass
-
-import argparse
+        user = input('Please type your username for logging into Makor: ')
+        return user
+    
+    def passwd(self):
+        passwd = input('Please type your password for logging into Makor: ')
+        return passwd
 
 def __main__():
-    
+
+    import argparse
+
     parser = argparse.ArgumentParser(
         description="Define how and what you you want tech'd into Makor with these arguments.")
 
@@ -136,7 +137,7 @@ def __main__():
 
     parser.add_argument(
         '--process', 
-        choices=['r', 'r'], 
+        choices=['r', 't'], 
         help='Type "r" for sending selected asset/s to Resale process, "t" to send to Teardown process', 
     )
 
@@ -145,6 +146,18 @@ def __main__():
         choices=['1', '2', '3', '4'], 
         help=' Describe the compliance label you want applied. 1 is: Tested for Key functions. 2 is: Evaluated and Non-Functioning. 3 is: Tested for Full Functions. 4 is: Specialty Electronics.', 
         type=int
+    )
+
+    parser.add_argument(
+        '--misc', '-m', 
+        help='Write in some miscellaneous factor about this asset in Makor', 
+        type=str
+    )
+
+    parser.add_argument(
+        '--args', 
+        choices=['r', 'd', 'o'],
+        help='Use some of the premade arguments for miscellaneous entries for asset audit page in Makor'
     )
 
     args = parser.parse_args()
@@ -171,22 +184,27 @@ def __main__():
                     assets2ttech = open(args.filename)
                     list_assets = assets2ttech.read()
                     is_list == True
+                    num_lines = len(assets2ttech.readlines())
                 else:
-                    raise AssetIngestError('File given is not a .txt file.')
+                    raise Exception('File given is not a .txt file.')
 
-            except: 
-                raise AssetIngestError('Please give a valid path to a txt file.') 
+            except Exception: 
+                print('Please give a valid path to a txt file.') 
         else:
-            raise AssetIngestError('No file or asset defined.')
+            raise FileNotFoundError('No file or asset defined.')
     else:
         is_list == False
     
+    if is_list == True:
+        lines_per = num_lines / 4
+        remain = num_lines % 4
+        if remain == 0:
+            thread_1 = 1
+            
 
-                     
-
-
-
-    x = 0 
-    while x < 5:
-        connection = threading.Thread(Tech_stuff(args.pallet, args.grade, args.process, args.compliance))
-        connection.start()
+    for _ in range(5):
+        try:
+            connection = threading.Thread(Tech_stuff(args.pallet, args.grade, args.process, args.compliance, ))
+            connection.start()
+        except Exception:
+            print('Unable to start connections to server.')
