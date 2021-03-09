@@ -9,13 +9,24 @@ import exceptions
 from exceptions import AssetIngestError
 from exceptions import CredentialsError
 
-class Tech_stuff():
+class credentials():
+
+    def user(self):
+        # Get user input for what their Makor login credentials are, and save them as a string in memory. 
+        user = input('Please type your username for logging into Makor: ')
+        return user
+    
+    def passwd(self):
+        passwd = input('Please type your password for logging into Makor: ')
+        return passwd
+
+class Tech_stuff(credentials):
     
     import time
     from selenium.webdriver.chrome.options import Options
     from selenium import webdriver
 
-    def __init__(self, pallet_in, grade_in, process_in, compliance_in, args, misc, assets_to_tech):
+    def __init__(self, pallet_in, grade_in, process_in, compliance_in, assets_to_tech):
         
         self.link = 'http://mrmprodnew/ProcessSteps/AssetRecoverySummary.aspx'
 
@@ -25,6 +36,8 @@ class Tech_stuff():
         self.gradeinput = grade_in
         self.processinput = process_in
         self.complianceinput = str(compliance_in)
+        self.assets = assets_to_tech
+        self.is_list = None
         
         self.asset_input = '//*[@id="ctl00_CPH1_txtSearch"]'
         self.search_assets = '//*[@id="ctl00_CPH1_btnSearch"]'
@@ -34,21 +47,39 @@ class Tech_stuff():
         self.compliance_label = '//*[@id="ctl00_CPH1_ccTransGrid1_rmaAssetInformation_ddlComplianceLabel"]'
         self.misc = '//*[@id="ctl00_CPH1_ccTransGrid1_rmaAssetComponents_ctl03_btnAdd"]'
         self.misc_textbx = '//*[@id="ctl00_CPH1_ccTransGrid1_rmaAssetComponents_ctl03_TextBox_Comp_11_2211768_7833637_38_0_True"]'
-        self.misc_textbx_2 = '//*[@id="ctl00_CPH1_ccTransGrid1_rmaAssetComponents_ctl03_TextBox_Comp_11_2211768_7833678_38_0_True"]'
-        self.misc_textbx_3 = '//*[@id="ctl00_CPH1_ccTransGrid1_rmaAssetComponents_ctl03_TextBox_Comp_11_2211768_7833679_38_0_True"]'
+        self.misc_textbx_prefix = '//*[@id="ctl00_CPH1_ccTransGrid1_rmaAssetComponents_ctl03_TextBox_Comp_11_2211768_783363'
+        self.misc_textbx_suffix = '_38_0_True"]'
         self.submit_asset = '//*[@id="ctl00_CPH1_ccTransGrid1_btnAssetInfoSubmit_input"]'
+
+        if assets_to_tech == list:
+            self.is_list == True
+        else:
+            self.is_list == False
+        
+        self.start(assets_to_tech)
+        
+    def start(self, assets):
         
         self.options = self.Options()
         # options.add_argument("--headless")
         self.options.add_argument("--window_size=1920X1080")
-
         self.driver = self.webdriver.Chrome(chrome_options=self.options, executable_path=self.chromedriver)
         try:
             self.driver.get(self.link)
         except:
             raise ConnectionError('Unable to connect to Makor. Is the server down?')
 
-
+        for asset in self.assets:
+            working_asset = self.assets[asset].split()
+            self.print_basic_tech(working_asset[0], self.palletinput, self.gradeinput, self.processinput, self.complianceinput)
+            self.process_args(working_asset[1])
+            if self.process_args(working_asset[1]) == True:
+                print(f"Successfully added arguments for asset {working_asset[0]}")
+            else:
+                print(f"Didn't add any arguments for asset {working_asset[0]}")
+            self.submit_tech()
+            print(f"Successfully tech'd asset {working_asset[0]}")
+                
     def find_element(self, xpath, data):
         
         self.findthing = self.driver.find_element_by_xpath(xpath)
@@ -60,10 +91,11 @@ class Tech_stuff():
         self.click = self.driver.find_element_by_xpath(xpath2)
         self.click.click()
 
-    def new_misc(self, data):
+    def new_misc(self, data, num):
         
         self.click_element(self.misc)
-        self.find_element(self.misc_textbx, data)
+        self.time.sleep(0.5)
+        self.find_element((self.misc_textbx_prefix + num + self.misc_textbx_suffix), data)
 
     def print_basic_tech(self, asset, palletinput, gradeinput, processinput, complianceinput):
         
@@ -74,8 +106,9 @@ class Tech_stuff():
     def submit_tech(self):
         
         self.click_element(self.submit_asset)
+        self.driver.switch_to_alert().accept()
 
-    def process_args(self, list):
+    def process_args(self, listboi):
         # Now comes processing the list and applying the different facets to individual assets depending on what flags are defined in the .txt file.
         # If there is a / after the asset, then the proigram will check for any of the following flags:
         # "r" means that 'Ray or Eric mentioned to scrap/tech selected asset.'
@@ -84,34 +117,34 @@ class Tech_stuff():
         # "f" means that 'Unit failed to power on or work properly or is unable to be reset."
         # "p" means that 'Unit is from a provider and may have customer data on it that is unremovable.'
         #
-        self.asset_attributes = []
-        if is_list == True:
-            for line in self.list:
-                for x in line:
-                    if x == '/':
-                        for letters in self.list:
-                            if letters == 'r':
-                                self.asset_attributes.append('r')
-                            elif letters == 'd':
-                                self.asset_attributes.append('d')
 
-class credentials():
+        for letters in listboi:
+            num = 7
+            if letters == 'r':
+                self.new_misc('Ray or Eric mentioned to scrap/tech selected asset.', str(num))
+                num = num + 1
+            elif letters == 'd':
+                self.new_misc('Unit is damaged and unable/not worth being refurbished.', str(num))
+                num = num + 1
+            elif letters == 'o':
+                self.new_misc('Unit is deprecated/old/no longer financially viable to resell.', str(num))
+                num = num + 1
+            elif letters == 'f':
+                self.new_misc('Unit failed to power on or work properly or is unable to be reset.', str(num))
+                num = num + 1
+            elif letters == 'p':
+                self.new_misc('Unit is from a provider and may have customer data on it that is unremovable.', str(num))
+                num = num + 1
+                self.applied_attributes = str(num)
+            return True
+        else: 
+            return False
 
-    def __init__(self):
-        pass
-
-    def user(self):
-        # Get user input for what their Makor login credentials are, and save them as a string in memory. 
-        user = input('Please type your username for logging into Makor: ')
-        return user
-    
-    def passwd(self):
-        passwd = input('Please type your password for logging into Makor: ')
-        return passwd
 
 def __main__():
 
     import argparse
+    import concurrent.futures
 
     parser = argparse.ArgumentParser(
         description="Define how and what you you want tech'd into Makor with these arguments.")
@@ -124,7 +157,7 @@ def __main__():
         )
 
     parser.add_argument(
-        '-a', 
+        '-a', '--asset', 
         help=' List a single asset, or assets separated by a comma', 
         type=str, 
         default=None, 
@@ -162,6 +195,8 @@ def __main__():
 
     args = parser.parse_args()
 
+    is_list = None
+
     if args.grade is None:
         parser.error("You need to define what grade you want the assets to be tech'd as")
     
@@ -177,12 +212,12 @@ def __main__():
         elif args.grade == 'f':
             args.process = 'Teardown'
     
-    if args.a is None:
+    if args.asset is None:
         if args.filename is not None:
             try:
                 if args.filename.endswith('.txt'):
                     assets2ttech = open(args.filename)
-                    list_assets = assets2ttech.read()
+                    list_assets = assets2ttech.read.splitlines()
                     is_list == True
                     num_lines = len(assets2ttech.readlines())
                 else:
@@ -194,17 +229,21 @@ def __main__():
             raise FileNotFoundError('No file or asset defined.')
     else:
         is_list == False
-    
-    if is_list == True:
-        lines_per = num_lines / 4
-        remain = num_lines % 4
-        if remain == 0:
-            thread_1 = 1
-            
 
-    for _ in range(5):
+    if is_list == True:
+        want_split = 4
+        lists = [list_assets[i*num_lines // want_split: (i+1)*num_lines // want_split]
+            for i in range(want_split)  ]
+        with concurrent.futures.ThreadPoolExecutor() as executor:
+            # Start threadpool executor for each thread to start parsinfg args for each asset and teching the assets in each thread's assigned list. 
+            executor.map(Tech_Stuff, args.pallet, args.grade, args.process, args.compliance, (lists[0], lists[1], lists[2], lists[3]))
+    
+    elif is_list == False:
         try:
-            connection = threading.Thread(Tech_stuff(args.pallet, args.grade, args.process, args.compliance, ))
-            connection.start()
+            tech_web_thread = Tech_stuff(args.pallet, args.grade, args.process, args.compliance, args.asset)
+            thread = threading.Thread(target=tech_web_thread)
+            thread.join()
+            print("Successfully tech'd asset " + args.asset + " as grade " + args.grade)
         except Exception:
-            print('Unable to start connections to server.')
+            print(f'Unable to tech asset {args.asset}')
+

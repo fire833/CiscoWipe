@@ -161,17 +161,23 @@ class ser_open():
         self.is_asa = False
         self.is_in_rommon = False
         self.is_in_priv_exec = False
-        while True:
-            self.reader().search_keywords()
+        self.alive = None
 
+    def start(self):
+        self.alive = True
+        while True:
+            self.reader()
+    
     def reader(self):
         # In theory, read 1\ lines, place the string into a list, and update _is reading done to trigger the word search function.
-        num = 0 
-        self.lines = []
-        while num < 1:
-            self.ser.read_until().append(self.lines)
-            num = num + 1
-        self.is_reading_done = True
+        if self.is_reading_done == False:
+            num = 0 
+            self.lines = []
+            while num < 1:
+                self.ser.read_until().append(self.lines)
+                num = num + 1
+            self.is_reading_done = True
+            self.search_keywords()
     
     def search_keywords(self):
         # With each line, this method looks for each of these arguments that could be in the string (common Cisco CLI indicators) and then determines what should be done, 
@@ -199,6 +205,8 @@ class ser_open():
         "Pre-configure Firewall now through interactive prompts [yes]?", 
 #17
         "Licensed features for this platform:", 
+        "rommon",
+
         
         ]
             if(words_and_phrases[2] in self.lines):
@@ -234,7 +242,7 @@ class ser_open():
                 self.is_asa = True
                 self.is_reading_done = False
 
-            elif(words_and_phrases[15] in self.lines):
+            elif(words_and_phrases[15] or words_and_phrases[18] in self.lines):
 
                 self.is_in_rommon = True
                 self.is_reading_done = False
@@ -248,6 +256,9 @@ class ser_open():
                 
                 self.info = True
                 self.is_reading_done = False
+
+            elif(words_and_phrases[11] in self.lines):
+                self.enable()
             
             else:
                 
@@ -263,6 +274,10 @@ class ser_open():
         cisco = 'Cisco'
         self.ser.write(cisco.encode())
         self.ser.write('\n')
+
+    def enable(self):
+        self.ser.write('\n')
+        self.ser.write('en'.encode() + '\n')
 
 # Toggling the while loop for break loop
 

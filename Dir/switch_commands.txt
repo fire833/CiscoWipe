@@ -9,3 +9,4 @@ private-config.text.backup
 pnp-tech-time
 config.text.backup
 oldconfig.backup
+info
