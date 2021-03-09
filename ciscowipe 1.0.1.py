@@ -123,9 +123,14 @@ def router_rommon_exec():
 
 def wap_rommon_exec():
     keyboard.write(enter)
-    keyboard.write(rm + 'private_multiple_fs' + enter + 'y' + enter)
     time.sleep(0.1)
-    keyboard.write(reset + enter + 'y' + enter)
+    keyboard.write(rm + 'private-multiple-fs' + enter)
+    time.sleep(0.2)
+    keyboard.write('y' + enter)
+    time.sleep(0.1)
+    keyboard.write(reset + enter)
+    time.sleep(0.1)
+    keyboard.write('y' + enter)
 
 def switch_rommon_exec():
     keyboard.write(enter)
@@ -168,18 +173,18 @@ while True:
     
     elif keyboard.is_pressed('F5'):
         wap_file_del()
-        print(msg + wlen)
+        print(msg + str(wlen))
 
     elif keyboard.is_pressed('F6'):
         switch_file_del()
-        print(msg + slen)
+        print(msg + str(slen))
 
     elif keyboard.is_pressed('F7'):
         router_file_del()
-        print(msg + rlen)
+        print(msg + str(rlen))
     
     elif keyboard.is_pressed('F8'):
         asa_file_del()
-        print(msg + alen)
+        print(msg + str(alen))
   
     time.sleep(0.1)
