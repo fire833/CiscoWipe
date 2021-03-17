@@ -101,7 +101,7 @@ def asa_file_del():
     keyboard.write('write erase' + enter)
     time.sleep(2)
     keyboard.write(enter)
-    keyboard.write('conf t' + enter)
+    keyboard.write('conf t' + enter + 'a' + enter)
     time.sleep(0.1)
     keyboard.write('config-register 0x2102' + enter)
     time.sleep(0.1)
