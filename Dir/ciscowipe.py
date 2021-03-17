@@ -67,75 +67,11 @@ with open(asa_commands_list, 'r') as asa:
 class main_del():
 
     import time
+    import serial
     
     def write(self, data):
         keyboard = Controller()
         keyboard.type(data)
-
-    def wap_file_del(self):
-        
-        # WAP Deletion logic
-        self.write(enter)
-        for x in wlist:
-            self.write(rm1 + x + 3 * enter)
-            time.sleep(sleep_time)
-        self.write('delete /recursive /force flash:configs\n')
-        self.write('# Succesfully Removed/Attempted to Remove ' + wlen + ' files from WAP!\n# Here is a list of remaining files: \n' + dirflash)
-
-    def switch_file_del(self):
-    
-        # Switch Deletion Logic
-        self.write(enter)
-        for y in slist:
-            self.write(rm + y + 3 * enter)
-            time.sleep(sleep_time)
-        self.write('# Succesfully Removed/Attempted to Remove ' + slen + ' files from Switch!\n# Here is a list of remaining files: \n' + dirflash)
-
-    def router_file_del(self):
-    
-        # Router Deletion Logic
-        self.write(enter)
-        for z in rlist:
-            self.write(rm + z + 3 * enter)
-            time.sleep(sleep_time)
-        self.write('# Succesfully Removed/Attempted to Remove ' + rlen + ' files from Router!\n# Here is a list of remaining files: \n' + dirflash)
-
-    def asa_file_del(self):
-
-        # ASA Deletion Logic
-        self.write(enter)
-        for w in alist:
-            self.write(rm1 + w + 4 * enter)
-            time.sleep(sleep_time)
-        self.write('# Succesfully Removed/Attempted to Remove ' + alen + ' files from ASA!\n# Here is a list of remaining files: \n' + dirflash)
-
-class rommon_del(main_del):
-
-    # ROMMON RESET Functions
-
-    def router_rommon_exec(self):
-        self.write(enter)
-        self.write(confreg + register1 + enter)
-        time.sleep(3.5)
-        self.write(reset + enter)
-
-    def wap_rommon_exec(self):
-        self.write(enter)
-        self.write(rm + 'private_multiple_fs' + enter + 'y' + enter)
-        time.sleep(0.1)
-        self.write(reset + enter + 'y' + enter)
-
-    def switch_rommon_exec(self):
-        self.write(enter)
-        for y in slist:
-            self.write(rm + y + enter + 'y' + enter)
-            time.sleep(sleep_time)
-
-    def asa_rommon_exec(self):
-        self.write('escape')
-        self.write(confreg + space + register1)
-        time.sleep(10)
-        self.write('boot' + enter)
 
 class serialwords():
 
@@ -145,15 +81,16 @@ class serialwords():
     def options(self):
         pass
 
-class ser_open():
+class ser_instance():
     
     from tech import Tech_stuff
-    import serial
     import keyword
+    import time
 
     def __init__(self, port, baud):
         self.ser = serial.Serial(port=port, baudrate=baud)
-        self.ser.open()
+        
+        self.port = port
         self.is_reading_done = False
         self.is_wap = False
         self.is_switch = False
@@ -163,6 +100,8 @@ class ser_open():
         self.is_in_priv_exec = False
         self.alive = None
 
+        self.ser.open()
+
     def start(self):
         self.alive = True
         while True:
@@ -171,11 +110,13 @@ class ser_open():
     def reader(self):
         # In theory, read 1\ lines, place the string into a list, and update _is reading done to trigger the word search function.
         if self.is_reading_done == False:
-            num = 0 
+            self.num = 0 
             self.lines = []
-            while num < 1:
-                self.ser.read_until().append(self.lines)
-                num = num + 1
+            while self.num < 1:
+                self.ser.read_until().decode('utf-8').append(self.lines)
+                if self.print == True:
+                    print(self.port + self.lines)
+                self.num = self.num + 1
             self.is_reading_done = True
             self.search_keywords()
     
@@ -206,7 +147,6 @@ class ser_open():
 #17
         "Licensed features for this platform:", 
         "rommon",
-
         
         ]
             if(words_and_phrases[2] in self.lines):
@@ -223,7 +163,7 @@ class ser_open():
             
             elif(words_and_phrases[3] or words_and_phrases[13] in self.lines):
                 
-                self.ser.write("\n")
+                self.ser.write("\n".encode('utf-8'))
                 self.lines = []
                 self.is_reading_done = False
             
@@ -267,27 +207,93 @@ class ser_open():
             
     def no_config_dialogue(self):
         no = 'no'
-        self.ser.write(no.encode())
-        self.ser.write('\n')
+        self.write(no)
+        self.write('\n')
 
     def username_and_pass(self):
         cisco = 'Cisco'
-        self.ser.write(cisco.encode())
-        self.ser.write('\n')
+        self.write(cisco)
+        self.write('\n')
 
     def enable(self):
-        self.ser.write('\n')
-        self.ser.write('en'.encode() + '\n')
+        self.write('\n')
+        self.write('en' + '\n')
+
+    def write(self, data):
+        self.ser.write(data.encode('utf-8'))
+    
+        # ROMMON RESET Functions
+
+    def router_rommon_exec(self):
+        self.write(enter)
+        self.write(confreg + register1 + enter)
+        time.sleep(3.5)
+        self.write(reset + enter)
+
+    def wap_rommon_exec(self):
+        self.write(enter)
+        self.write(rm + 'private_multiple_fs' + enter + 'y' + enter)
+        time.sleep(0.1)
+        self.write(reset + enter + 'y' + enter)
+
+    def switch_rommon_exec(self):
+        self.write(enter)
+        for y in slist:
+            self.write(rm + y + enter + 'y' + enter)
+            time.sleep(sleep_time)
+
+    def asa_rommon_exec(self):
+        self.write('escape')
+        self.write(confreg + space + register1)
+        time.sleep(10)
+        self.write('boot' + enter)
+    
+    def wap_file_del(self):
+        
+        # WAP Deletion logic
+        self.write(enter)
+        for x in wlist:
+            self.write(rm1 + x + 3 * enter)
+            time.sleep(sleep_time)
+        self.write('delete /recursive /force flash:configs\n')
+        self.write('# Succesfully Removed/Attempted to Remove ' + wlen + ' files from WAP!\n# Here is a list of remaining files: \n' + dirflash)
+
+    def switch_file_del(self):
+    
+        # Switch Deletion Logic
+        self.write(enter)
+        for y in slist:
+            self.write(rm + y + 3 * enter)
+            time.sleep(sleep_time)
+        self.write('# Succesfully Removed/Attempted to Remove ' + slen + ' files from Switch!\n# Here is a list of remaining files: \n' + dirflash)
+
+    def router_file_del(self):
+    
+        # Router Deletion Logic
+        self.write(enter)
+        for z in rlist:
+            self.write(rm + z + 3 * enter)
+            time.sleep(sleep_time)
+        self.write('# Succesfully Removed/Attempted to Remove ' + rlen + ' files from Router!\n# Here is a list of remaining files: \n' + dirflash)
+
+    def asa_file_del(self):
+
+        # ASA Deletion Logic
+        self.write(enter)
+        for w in alist:
+            self.write(rm1 + w + 4 * enter)
+            time.sleep(sleep_time)
+        self.write('# Succesfully Removed/Attempted to Remove ' + alen + ' files from ASA!\n# Here is a list of remaining files: \n' + dirflash)
 
 # Toggling the while loop for break loop
 
-class command_open(ser_open):
+class command_open(ser_instance):
 
     def __init__(self):
         pass
 
     def command_keywords(self):
-        pass
+        pass     
 
 """
 while True:
@@ -307,18 +313,9 @@ while True:
         status = 'OFF'
         notstatus = 'ON'
 """
+from PyQt5 import QtGui
 
-main_del = main_del()
+def main():
+# Start the PyQt based application window which will house smaller views of each of the consoles, as well as buttons for performing different functions
+app = QtGui.QGuiApplication()
 
-with keyboard.GlobalHotKeys({
-
-'<f5>': main_del.wap_file_del(), 
-'<f6>': main_del.switch_file_del(), 
-'<f7>': main_del.router_file_del(), 
-'<f8>': main_del.asa_file_del()
-
-}) as hkeys:
-    hkeys.join()
-
-print("HI")
-# Loops for looking for command input

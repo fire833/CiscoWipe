@@ -21,13 +21,12 @@ class credentials():
         return passwd
 
 class Tech_stuff(credentials):
-    
-    import time
-    from selenium.webdriver.chrome.options import Options
-    from selenium import webdriver
-
-    def __init__(self, pallet_in, grade_in, process_in, compliance_in, assets_to_tech):
         
+    import time
+
+    
+    def __init__(self, pallet_in, grade_in, process_in, compliance_in, assets_to_tech):
+
         self.link = 'http://mrmprodnew/ProcessSteps/AssetRecoverySummary.aspx'
 
         self.chromedriver = os.path.join(sys.path[0], 'chromedriver.exe')
@@ -60,10 +59,15 @@ class Tech_stuff(credentials):
         
     def start(self, assets):
         
-        self.options = self.Options()
-        # options.add_argument("--headless")
+        from selenium.webdriver.chrome.options import Options
+        from selenium import webdriver
+        
+        self.options = Options()
+        # self.options.add_argument("--headless")
+
         self.options.add_argument("--window_size=1920X1080")
-        self.driver = self.webdriver.Chrome(chrome_options=self.options, executable_path=self.chromedriver)
+        self.driver = webdriver.Chrome(chrome_options=self.options, executable_path=self.chromedriver)
+
         try:
             self.driver.get(self.link)
         except:
@@ -152,8 +156,7 @@ def __main__():
     parser.add_argument(
         'grade', 
         choices=['a', 'b', 'c', 'd', 'f'], 
-        help="Define the grade that you want the asset/s to be tech'd as in Makor", 
-        required=True, 
+        help="Define the grade that you want the asset/s to be tech'd as in Makor",  
         )
 
     parser.add_argument(
@@ -163,7 +166,9 @@ def __main__():
         default=None, 
         )
 
-    parser.add_argument('filename')
+    parser.add_argument('--filename', '-f',
+    help="(Optional) define the path to the filename that contains the assets you wanrt tech'd"
+    )
     
     parser.add_argument('-p', '--pallet', 
         help='Define what pallet you want these assets to be placed in', )
@@ -206,6 +211,12 @@ def __main__():
         elif args.grade == 'f':
             args.pallet = '1-Default-Pallet-T'
     
+    if args.compliance is None:
+        if args.grade == 'a' or 'b' or 'c' or 'd':
+            args.compliance = '1'
+        elif args.grade == 'f':
+            args.compliance = '2'
+    
     if args.process is None:
         if args.grade == 'a' or 'b' or 'c' or 'd':
             args.process = 'Resale'
@@ -234,9 +245,15 @@ def __main__():
         want_split = 4
         lists = [list_assets[i*num_lines // want_split: (i+1)*num_lines // want_split]
             for i in range(want_split)  ]
-        with concurrent.futures.ThreadPoolExecutor() as executor:
-            # Start threadpool executor for each thread to start parsinfg args for each asset and teching the assets in each thread's assigned list. 
-            executor.map(Tech_Stuff, args.pallet, args.grade, args.process, args.compliance, (lists[0], lists[1], lists[2], lists[3]))
+        for x in range(start=0, stop=3):
+            tech_web_thread = Tech_stuff(args.pallet, args.grade, args.process, args.compliance, lists[x])
+            thread = threading.Thread(tech_web_thread)
+            thread.start()
+
+#       Outdated version:
+#        with concurrent.futures.ThreadPoolExecutor() as executor:
+#            # Start threadpool executor for each thread to start parsing args for each asset and teching the assets in each thread's assigned list. 
+#            executor.map(Tech_Stuff, args.pallet, args.grade, args.process, args.compliance, (lists[0], lists[1], lists[2], lists[3]))
     
     elif is_list == False:
         try:
@@ -247,3 +264,5 @@ def __main__():
         except Exception:
             print(f'Unable to tech asset {args.asset}')
 
+
+__main__()
