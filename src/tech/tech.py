@@ -6,8 +6,6 @@ import os
 import sys
 import threading
 import exceptions
-from exceptions import AssetIngestError
-from exceptions import CredentialsError
 
 class credentials():
 
