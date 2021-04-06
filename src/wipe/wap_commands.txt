@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 private-multiple-fs
 env_vars
 capwap-saved-config-bak
@@ -20,4 +21,28 @@ info
 sensord_CSPRNG0
 pnp-saved-config
 lwapp_reap.cfg
+=======
+private-multiple-fs
+env_vars
+capwap-saved-config-bak
+config.txt
+lwapp_mm_mwar_hash.cfg
+event.log
+capwap-saved-config
+sensord_CSPRNG1
+sensord_CSPRNG0
+env_vars
+atf_override_config_slot0.txt
+atf_override_config_slot1.txt
+event.r0
+event.r1
+ce
+lwapp_reap.cfg.bak
+event.capwap
+lwapp_non_apspecific_reap.cfg
+info
+sensord_CSPRNG0
+pnp-saved-config
+lwapp_reap.cfg
+>>>>>>> 702a546da1e7687c7f6840999a5263ae5a294833
 lwapp_officeextend.cfg

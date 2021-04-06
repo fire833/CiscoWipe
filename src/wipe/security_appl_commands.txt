@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 config.txt
 securedesktop-asa-3.2.1.103-k9.pkg
 sslclient-win-1.1.0.154.pkg
@@ -43,3 +44,50 @@ anyconnect-macosx-i386-2.5.2014-k9.pkg
 csd_3.5.2008-k9.pkg
 crash.txt
 
+=======
+config.txt
+securedesktop-asa-3.2.1.103-k9.pkg
+sslclient-win-1.1.0.154.pkg
+nat_ident_migrate
+/recursive coredumpinfo
+/recursive log
+/recursive crypto_archive
+FSCK0000.REC
+FSCK0001.REC
+FSCK0002.REC
+FSCK0003.REC
+FSCK0004.REC
+FSCK0005.REC
+FSCK0006.REC
+FSCK0007.REC
+FSCK0008.REC
+FSCK0009.REC
+FSCK0010.REC
+FSCK0011.REC
+FSCK0012.REC
+FSCK0013.REC
+FSCK0014.REC
+FSCK0015.REC
+FSCK0016.REC
+FSCK0017.REC
+FSCK0018.REC
+FSCK0019.REC
+FSCK0020.REC
+FSCK0021.REC
+FSCK0022.REC
+FSCK0023.REC
+FSCK0024.REC
+FSCK0025.REC
+FSCK0026.REC
+FSCK0027.REC
+FSCK0028.REC
+FSCK0029.REC
+FSCK0030.REC
+/recursive sdesktop
+anyconnect-win-2.5.2014-k9.pkg
+anyconnect-linux-2.5.2014-k9.pkg
+anyconnect-macosx-i386-2.5.2014-k9.pkg
+csd_3.5.2008-k9.pkg
+crash.txt
+
+>>>>>>> 702a546da1e7687c7f6840999a5263ae5a294833

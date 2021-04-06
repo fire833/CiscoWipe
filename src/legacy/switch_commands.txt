@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 config.txt
 vlan.dat
 config.text
@@ -10,3 +11,17 @@ pnp-tech-time
 config.text.backup
 oldconfig.backup
 info
+=======
+config.txt
+vlan.dat
+config.text
+multiple-fs
+private-config.text
+crashinfo_ext
+pnp-tech-discovery-summary
+private-config.text.backup
+pnp-tech-time
+config.text.backup
+oldconfig.backup
+info
+>>>>>>> 702a546da1e7687c7f6840999a5263ae5a294833
