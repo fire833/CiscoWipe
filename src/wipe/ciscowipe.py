@@ -98,6 +98,7 @@ class ser_instance():
         self.is_in_rommon = False
         self.is_in_priv_exec = False
         self.alive = None
+        self.print = None
 
         self.ser.open()
 
@@ -312,9 +313,6 @@ while True:
         status = 'OFF'
         notstatus = 'ON'
 """
-from PyQt5 import QtGui
 
-def main():
 # Start the PyQt based application window which will house smaller views of each of the consoles, as well as buttons for performing different functions
-    app = QtGui.QGuiApplication()
 
