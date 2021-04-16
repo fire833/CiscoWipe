@@ -7,9 +7,9 @@ import sys
 import random
 
 ## Triggers for recomputing different parts of the data ##
-ios_model_done = True
-ap_model_done = True
-pkg_model_done = True                                    
+ios_model_done = False
+ap_model_done = False
+pkg_model_done = False                                    
 ##########################################################
 
 model =  ['c2900-', 'c1000-', 'c1600-', 'c2500-', 'c2800-', 'c3620-', 'c3640-', 'c4000-', 'c4500-', 'c3750-', 'c3700-', 'c3600-', 'c2960s-']
