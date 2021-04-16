@@ -66,14 +66,17 @@ with open(os.path.join(sys.path[0], "data.csv"), "w", newline='') as data:
                                 combinations = []
     else:
         print('Skipping AP model data computation. ')
+
     
     if pkg_model_done == False:
-        for typ in pkg_type:
-            for num in pkg_numbers:
-                number = random.randint(1111,22222)
-                combinations = [typ + num + str(number) + '-k9.pkg', '1']
-                writer.writerow(combinations)
-                combinations = []
+        #Do five iterations for the sake of providing more random numbers
+        for x in range(5):
+            for typ in pkg_type:
+                for num in pkg_numbers:
+                    number = random.randint(1111,22222)
+                    combinations = [typ + num + str(number) + '-k9.pkg', '1']
+                    writer.writerow(combinations)
+                    combinations = []
     else:
         print('Skipping Package model data computation. ')
 
