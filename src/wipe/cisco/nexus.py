@@ -10,7 +10,7 @@ class nexus_wipe():
 
     def __init__(self):
         
-        from global_write import global_write as writer
+        from cisco.global_write import global_write as writer
 
         self.write = writer()
 

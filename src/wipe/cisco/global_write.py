@@ -8,6 +8,8 @@
 
 class global_write():
 
+    import serial
+
     def __init__(self, port, baud, bytesize, parity, stopbits, timeout, ):
         
         import serial

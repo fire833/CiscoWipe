@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
 ###############################################
 #
-# Classes for wiping Cisco and other products with the yserial API, among other features.
-# Notes: Look to replace with API calls in the future, since web interaction is slow and unstable. 
+# Classes for wiping Cisco and other products with the pyserial API, among other features.
+# Notes: Look to replace database writing from selenium website access to API calls in the future, since web interaction is slow and unstable. 
 # Copyright 2021 Kendall Tauser
 #
 ###############################################
 
 #import pyautogui
-# import keyboard
+#import keyboard
 import os
 import sys
 import time

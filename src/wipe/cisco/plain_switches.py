@@ -3,7 +3,7 @@
 #
 # Class for wiping Cisco switching products, tested on (placeholder)
 # Utilizes the global write class for writing to device's serial port. 
-# Notes: Future versions will use the AI engine to see what files actually need to be deleted from any one unit instaed of relying on the arbiitrary file list.
+# Notes: Future versions will use the AI engine to see what files actually need to be deleted from any one unit instaed of relying on the arbitrary file list.
 #
 ################################################
 
@@ -15,7 +15,7 @@ class plain_switch_wipe():
 
         import os
         import sys
-        from global_write import global_write as writer
+        from cisco.global_write import global_write as writer
         
         self.switch_commands_list = os.path.join(sys.path[0], 'switch_commands.txt')
 
