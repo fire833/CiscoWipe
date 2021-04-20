@@ -1,6 +1,11 @@
-
+#!/usr/bin/env python3
+###############################################
+#
 # Classes for tech'ing stuff, including the class for raw selenium interaction, and others.
+# Notes: Look to replace with API calls in the future, since web interaction is slow and unstable. 
 # Copyright 2021 Kendall Tauser
+#
+###############################################
 
 import os
 import sys

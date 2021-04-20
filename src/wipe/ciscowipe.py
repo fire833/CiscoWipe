@@ -1,3 +1,11 @@
+#!/usr/bin/env python3
+###############################################
+#
+# Classes for wiping Cisco and other products with the yserial API, among other features.
+# Notes: Look to replace with API calls in the future, since web interaction is slow and unstable. 
+# Copyright 2021 Kendall Tauser
+#
+###############################################
 
 #import pyautogui
 # import keyboard
@@ -26,31 +34,19 @@ confreg = 'confreg'
 reset = 'reset'
 register1 = '0x2142'
 register2 = '0x2102'
-wap_commands_list = os.path.join(sys.path[0], 'wap_commands.txt')
-switch_commands_list = os.path.join(sys.path[0], 'switch_commands.txt')
-router_commands_list = os.path.join(sys.path[0], 'router_commands.txt')
-asa_commands_list = os.path.join(sys.path[0], 'security_appl_commands.txt')
 space = ' '
 sleep_time = 0.05
+dirflash = 'dir flash:\n'
+router_commands_list = os.path.join(sys.path[0], 'router_commands.txt')
+asa_commands_list = os.path.join(sys.path[0], 'security_appl_commands.txt')
 w = 0
 x = 0
 y = 0
 z = 0
-dirflash = 'dir flash:\n'
 breakloop = False
 keyrelease = True
 
 # Importing the command lists and saving them as collections in memory
-
-with open(wap_commands_list, 'r') as wap:
-    cm1 = wap.read()
-    wlist = cm1.splitlines()
-    wlen = str(len(wlist))
-
-with open(switch_commands_list, 'r') as switch:
-    cm2 = switch.read()
-    slist = cm2.splitlines()
-    slen = str(len(slist))
 
 with open(router_commands_list, 'r') as router:
     cm3 = router.read()
@@ -230,42 +226,11 @@ class ser_instance():
         time.sleep(3.5)
         self.write(reset + enter)
 
-    def wap_rommon_exec(self):
-        self.write(enter)
-        self.write(rm + 'private_multiple_fs' + enter + 'y' + enter)
-        time.sleep(0.1)
-        self.write(reset + enter + 'y' + enter)
-
-    def switch_rommon_exec(self):
-        self.write(enter)
-        for y in slist:
-            self.write(rm + y + enter + 'y' + enter)
-            time.sleep(sleep_time)
-
     def asa_rommon_exec(self):
         self.write('escape')
         self.write(confreg + space + register1)
         time.sleep(10)
         self.write('boot' + enter)
-    
-    def wap_file_del(self):
-        
-        # WAP Deletion logic
-        self.write(enter)
-        for x in wlist:
-            self.write(rm1 + x + 3 * enter)
-            time.sleep(sleep_time)
-        self.write('delete /recursive /force flash:configs\n')
-        self.write('# Succesfully Removed/Attempted to Remove ' + wlen + ' files from WAP!\n# Here is a list of remaining files: \n' + dirflash)
-
-    def switch_file_del(self):
-    
-        # Switch Deletion Logic
-        self.write(enter)
-        for y in slist:
-            self.write(rm + y + 3 * enter)
-            time.sleep(sleep_time)
-        self.write('# Succesfully Removed/Attempted to Remove ' + slen + ' files from Switch!\n# Here is a list of remaining files: \n' + dirflash)
 
     def router_file_del(self):
     

@@ -1,3 +1,11 @@
+#!/usr/bin/env python3
+###############################################
+#
+# Logic for creating dataset for training an ai model for file classification on cisco IOS devices
+# Notes: Looking to create some sort of modular 
+# Copyright 2021 Kendall Tauser
+#
+###############################################
 
 import itertools
 from itertools import permutations
@@ -5,11 +13,13 @@ import csv
 import os
 import sys
 import random
+import pandas as pd
 
 ## Triggers for recomputing different parts of the data ##
-ios_model_done = False
-ap_model_done = False
-pkg_model_done = False                                    
+ios_model_done = True
+ap_model_done = True
+pkg_model_done = True
+cp_conf_done = True
 ##########################################################
 
 model =  ['c2900-', 'c1000-', 'c1600-', 'c2500-', 'c2800-', 'c3620-', 'c3640-', 'c4000-', 'c4500-', 'c3750-', 'c3700-', 'c3600-', 'c2960s-']
@@ -35,6 +45,8 @@ ap_suffix = ['.JD14', '.JF7', '.JD10', '.JD11', '.JD12', '.JD13', '.JD15', '.JF5
 pkg_type = ['anyconnect-linux', 'anyconnect-macosx-i386', 'anyconnect-windows', 'securedesktop-asa', 'sslclient-win', 'securedesktop-ios', 'anyconnect-win', 'sslclient-win', 'csd_', 'anyconnect-macos']
 
 pkg_numbers = ['-1.', '-2.', '-3.', '-4.', '-5.', '-6.', '-7.', '-8.', '-9.', '-0.']
+
+
 
 combinations = []
 with open(os.path.join(sys.path[0], "data.csv"), "w", newline='') as data:
@@ -80,4 +92,16 @@ with open(os.path.join(sys.path[0], "data.csv"), "w", newline='') as data:
     else:
         print('Skipping Package model data computation. ')
 
+    if cp_conf_done == False:
+        for x in range(9999):
+            num = x
+            combinations = ['cpconfig-' + str(num) + '.cfg,1']
+            writer.writerow(combinations)
+            combinations = []
+    else:
+        print('Skipping cp-config model data computation. ')
 
+dataset = pd.read_csv(os.path.join(sys.path[0], "data.csv"))
+#dataset.shuffle()
+    
+dataset.head()
