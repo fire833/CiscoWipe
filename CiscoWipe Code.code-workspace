@@ -3,5 +3,15 @@
 		{
 			"path": "."
 		}
-	]
+	],
+	"settings": {
+		"files.associations": {
+			"core": "cpp",
+			"*.inc": "cpp",
+			"fixedpoint": "cpp",
+			"tensor": "cpp",
+			"threadpool": "cpp",
+			"specialfunctions": "cpp"
+		}
+	}
 }
