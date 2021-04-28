@@ -149,49 +149,40 @@ class ser_instance():
                 
                 self.no_config_dialogue()
                 self.lines = []
-                self.is_reading_done = False
             
             elif(words_and_phrases[8] or words_and_phrases[10] in self.lines):
                 
                 self.username_and_pass()
                 self.lines = []
-                self.is_reading_done = False
             
             elif(words_and_phrases[3] or words_and_phrases[13] in self.lines):
                 
                 self.ser.write("\n".encode('utf-8'))
                 self.lines = []
-                self.is_reading_done = False
             
             elif(words_and_phrases[4] in self.lines):
                 
                 self.is_router = True
-                self.is_reading_done = False
             
             elif(words_and_phrases[5] in self.lines):
 
                 self.is_wap = True
-                self.is_reading_done = False
             
             elif(words_and_phrases[14] in self.lines):
 
                 self.is_asa = True
-                self.is_reading_done = False
 
             elif(words_and_phrases[15] or words_and_phrases[18] in self.lines):
 
                 self.is_in_rommon = True
-                self.is_reading_done = False
             
             elif(words_and_phrases[16] in self.lines):
 
                 self.is_asa = True
-                self.is_reading_done = False
 
             elif(words_and_phrases[17] in self.lines):
                 
                 self.info = True
-                self.is_reading_done = False
 
             elif(words_and_phrases[11] in self.lines):
                 self.enable()
@@ -199,7 +190,6 @@ class ser_instance():
             else:
                 
                 self.lines = []
-                self.is_reading_done = False
             
     def no_config_dialogue(self):
         no = 'no'

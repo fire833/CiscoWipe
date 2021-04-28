@@ -27,7 +27,6 @@ class Tech_stuff(credentials):
         
     import time
 
-    
     def __init__(self, pallet_in, grade_in, process_in, compliance_in, assets_to_tech):
 
         self.link = 'http://mrmprodnew/ProcessSteps/AssetRecoverySummary.aspx'
