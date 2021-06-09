@@ -1,4 +1,3 @@
-
 #import pyautogui
 import keyboard
 import os
@@ -145,21 +144,61 @@ def asa_rommon_exec():
     time.sleep(10)
     keyboard.write('boot' + enter)
 
+def grade_b():
+    keyboard.write("1000000-Default")
+    time.sleep(0.35)
+    keyboard.send("up") 
+    time.sleep(0.2)
+    keyboard.send("Tab")
+    time.sleep(0.2)
+    keyboard.write("B")
+    time.sleep(0.2)
+    keyboard.send("Tab")
+    time.sleep(0.2)
+    keyboard.write("R")
+    time.sleep(0.2)
+    keyboard.write("Tab")
+    time.sleep(sleep_time)
 
-print(Fore.LIGHTYELLOW_EX + 'Thank you for utilizing CiscoWipe 1.0.1! \nThe program has a keyboard input listener, which listens for keybinds to type out certain keystrokes on the keyboard in order to do basic wiping functions over serial terminal!\n' + Fore.RESET)
-print(Fore.RED + 'Ctrl' + Fore.CYAN + ' indicates that you want to do initial resetting in ROMMON\n')
-print(Fore.LIGHTRED_EX + 'F5' + Fore.CYAN + ' indicates you want to wipe (either in rommon ' + Fore.BLUE + 'with' + Fore.RESET + Fore.CYAN + ' ctrl, or in priv exec without) a Cisco WAP\n' + Fore.RESET)
-print(Fore.LIGHTRED_EX + 'F6' + Fore.CYAN + ' indicates you want to wipe (either in rommon ' + Fore.BLUE + 'with' + Fore.RESET + Fore.CYAN + ' ctrl, or in priv exec without) a Cisco Switch\n' + Fore.RESET)
-print(Fore.LIGHTRED_EX + 'F7' + Fore.CYAN + ' indicates you want to wipe (either in rommon ' + Fore.BLUE + 'with' + Fore.RESET + Fore.CYAN + ' ctrl, or in priv exec without) a Cisco Router\n' + Fore.RESET)
-print(Fore.LIGHTRED_EX + 'F8' + Fore.CYAN + ' indicates you want to wipe (either in rommon ' + Fore.BLUE + 'with' + Fore.RESET + Fore.CYAN + ' ctrl, or in priv exec without) a Cisco Adaptive Security Appliance (ASA)\n' + Fore.RESET)
-print(Fore.LIGHTYELLOW_EX + 'Happy Wiping!\n' + Fore.RESET)
+def grade_f():
+    keyboard.write("1-Default-Pallet-T")
+    time.sleep(0.35)
+    keyboard.send("up") 
+    time.sleep(0.2)
+    keyboard.send("Tab")
+    time.sleep(0.2)
+    keyboard.write("F")
+    time.sleep(0.2)
+    keyboard.send("Tab")
+    time.sleep(0.2)
+    keyboard.write("T")
+    time.sleep(0.2)
+    keyboard.write("Tab")
+    time.sleep(sleep_time)
+
+
+print('Thank you for utilizing CiscoWipe 1.0.1! \nThe program has a keyboard input listener, which listens for keybinds to type out certain keystrokes on the keyboard in order to do basic wiping functions over serial terminal!\n')
+print('Ctrl' + ' indicates that you want to do initial resetting in ROMMON\n')
+print('F5' + ' indicates you want to wipe (either in rommon ' + 'with' + ' ctrl, or in priv exec without) a Cisco WAP\n')
+print('F6' + ' indicates you want to wipe (either in rommon ' + 'with' + ' ctrl, or in priv exec without) a Cisco Switch\n')
+print('F7' + ' indicates you want to wipe (either in rommon ' + 'with' + ' ctrl, or in priv exec without) a Cisco Router\n')
+print('F8' + ' indicates you want to wipe (either in rommon ' + 'with' + ' ctrl, or in priv exec without) a Cisco Adaptive Security Appliance (ASA)\n')
+print('Ctrl + Shift + F7 indicates you wish to fill in Makor to grade asset as grade B.')
+print('Ctrl + Shift + F8 indicates you wish to fill in Makor to grade asset as grade F.')
+print('Happy Wiping!\n')
 # Initial loops for searching for keypresses
 
 msg = 'Deleted / Tried to delete this many files: '
 
 while True:
-       
-    if keyboard.is_pressed('ctrl+F8'):
+    
+    if keyboard.is_pressed('ctrl+shift+F8'):
+        grade_f()
+    
+    elif keyboard.is_pressed('ctrl+shift+F7'):
+        grade_b()
+        
+    elif keyboard.is_pressed('ctrl+F8'):
         asa_rommon_exec()
     
     elif keyboard.is_pressed('ctrl+F7'):

@@ -10,3 +10,8 @@ pnp-tech-time
 config.text.backup
 oldconfig.backup
 info
+private-config.text.renamed
+express_setup.debug
+config.text.renamed
+vlan.dat.renamed
+
